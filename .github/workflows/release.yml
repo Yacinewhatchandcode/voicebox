@@ -66,24 +66,24 @@ jobs:
         run: |
           pip install -r backend/requirements-mlx.txt
 
-      - name: Install PyTorch with CUDA (Windows only)
-        if: matrix.platform == 'windows-latest'
-        run: |
-          pip install torch --index-url https://download.pytorch.org/whl/cu121 --force-reinstall --no-deps
-          pip install torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
-
       - name: Build Python server (Linux/macOS)
         if: matrix.platform != 'windows-latest'
         run: |
           chmod +x scripts/build-server.sh
           ./scripts/build-server.sh
 
-      - name: Build Python server (Windows)
+      - name: Build CPU Python server (Windows)
         if: matrix.platform == 'windows-latest'
         shell: bash
         run: |
           cd backend
-          python build_binary.py
+
+          echo "Installing CPU-only PyTorch..."
+          pip uninstall -y torch torchvision torchaudio
+          pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
+
+          echo "Building CPU server binary..."
+          python build_binary.py cpu
 
           # Get platform tuple
           PLATFORM=$(rustc --print host-tuple)
@@ -91,9 +91,31 @@ jobs:
           # Create binaries directory
           mkdir -p ../tauri/src-tauri/binaries
 
-          # Copy with platform suffix
+          # Copy CPU version (default for installer)
           cp dist/voicebox-server.exe ../tauri/src-tauri/binaries/voicebox-server-${PLATFORM}.exe
-          echo "Built voicebox-server-${PLATFORM}.exe"
+          echo "Built CPU server: voicebox-server-${PLATFORM}.exe (~500MB)"
+
+      - name: Build CUDA Python server (Windows)
+        if: matrix.platform == 'windows-latest'
+        shell: bash
+        run: |
+          cd backend
+
+          echo "Installing CUDA PyTorch..."
+          pip uninstall -y torch torchvision torchaudio
+          pip install torch --index-url https://download.pytorch.org/whl/cu121 --force-reinstall --no-deps
+          pip install torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
+
+          echo "Building CUDA server binary..."
+          python build_binary.py cuda
+
+          # Get platform tuple
+          PLATFORM=$(rustc --print host-tuple)
+
+          # Copy CUDA version for separate upload
+          mkdir -p cuda-release
+          cp dist/voicebox-server-cuda.exe cuda-release/voicebox-server-cuda-${PLATFORM}.exe
+          echo "Built CUDA server: voicebox-server-cuda-${PLATFORM}.exe (~3GB)"
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
@@ -150,11 +172,26 @@ jobs:
             ### Installation
             - **macOS (Apple Silicon)**: Download the `aarch64.dmg` file - uses MLX for fast native inference
             - **macOS (Intel)**: Download the `x64.dmg` file - uses PyTorch
-            - **Windows**: Download the `.msi` installer
+            - **Windows**: Download the `.msi` installer - includes CPU-only inference (~500MB)
             - **Linux**: Download the `.AppImage` or `.deb` package
+
+            ### NVIDIA GPU Acceleration (Windows)
+            Windows users with NVIDIA GPUs can enable CUDA for 4-5x faster inference:
+            1. Install the app normally (CPU version)
+            2. The app will detect your GPU and offer to download CUDA support
+            3. Or manually download `voicebox-server-cuda-*.exe` (~3GB) from the assets below
 
             The app includes automatic updates - future updates will be installed automatically.
           releaseDraft: true
           prerelease: false
           args: ${{ matrix.args }}
           includeUpdaterJson: true
+
+      - name: Upload CUDA server binary (Windows only)
+        if: matrix.platform == 'windows-latest'
+        uses: softprops/action-gh-release@v1
+        with:
+          files: backend/cuda-release/voicebox-server-cuda-*.exe
+          draft: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

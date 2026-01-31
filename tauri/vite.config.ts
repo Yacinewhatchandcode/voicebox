@@ -35,5 +35,15 @@ export default defineConfig({
     minify: !process.env.TAURI_DEBUG,
     sourcemap: !!process.env.TAURI_DEBUG,
     outDir: 'dist',
+    rollupOptions: {
+      external: [
+        '@tauri-apps/api',
+        '@tauri-apps/plugin-dialog',
+        '@tauri-apps/plugin-fs',
+        '@tauri-apps/plugin-process',
+        '@tauri-apps/plugin-shell',
+        '@tauri-apps/plugin-updater',
+      ],
+    },
   },
 });

@@ -5,6 +5,7 @@ PyInstaller build script for creating standalone Python server binary.
 import PyInstaller.__main__
 import os
 import platform
+import sys
 from pathlib import Path
 
 
@@ -13,15 +14,27 @@ def is_apple_silicon():
     return platform.system() == "Darwin" and platform.machine() == "arm64"
 
 
-def build_server():
-    """Build Python server as standalone binary."""
+def build_server(variant="cpu"):
+    """Build Python server as standalone binary.
+
+    Args:
+        variant: 'cpu' for CPU-only build (~500MB) or 'cuda' for CUDA build (~3GB)
+    """
     backend_dir = Path(__file__).parent
+
+    if variant not in ['cpu', 'cuda']:
+        raise ValueError(f"Invalid variant: {variant}. Must be 'cpu' or 'cuda'")
+
+    # Set binary name based on variant
+    binary_name = f'voicebox-server-{variant}' if variant == 'cuda' else 'voicebox-server'
+
+    print(f"Building {variant.upper()} variant: {binary_name}")
 
     # PyInstaller arguments
     args = [
         'server.py',  # Use server.py as entry point instead of main.py
         '--onefile',
-        '--name', 'voicebox-server',
+        '--name', binary_name,
     ]
 
     # Add local qwen_tts path if specified (for editable installs)
@@ -100,9 +113,14 @@ def build_server():
     
     # Run PyInstaller
     PyInstaller.__main__.run(args)
-    
-    print(f"Binary built in {backend_dir / 'dist' / 'voicebox-server'}")
+
+    print(f"\n{'='*60}")
+    print(f"Build complete: {variant.upper()} variant")
+    print(f"Binary: {backend_dir / 'dist' / binary_name}")
+    print(f"{'='*60}\n")
 
 
 if __name__ == '__main__':
-    build_server()
+    # Accept variant as command line argument
+    variant = sys.argv[1] if len(sys.argv) > 1 else 'cpu'
+    build_server(variant)
