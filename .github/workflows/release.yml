@@ -132,10 +132,10 @@ jobs:
             python-version: "3.12"
             backend: "pytorch"
           # Linux - No TTS bundled, providers downloaded separately
-          # - platform: 'ubuntu-22.04'
-          #   args: ''
-          #   python-version: '3.12'
-          #   backend: 'none'
+          - platform: "ubuntu-22.04"
+            args: ""
+            python-version: "3.12"
+            backend: "none"
           # Windows - No TTS bundled, providers downloaded separately
           - platform: "windows-latest"
             args: ""
