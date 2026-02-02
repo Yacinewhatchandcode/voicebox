@@ -148,11 +148,11 @@ jobs:
             args: ""
             python-version: "3.12"
             backend: "none"
-          # Windows - No TTS bundled, providers downloaded separately
+          # Windows - PyTorch CPU bundled (works out of the box)
           - platform: "windows-latest"
             args: ""
             python-version: "3.12"
-            backend: "none"
+            backend: "pytorch"
 
     runs-on: ${{ matrix.platform }}
 
