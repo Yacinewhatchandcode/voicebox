@@ -1,5 +1,6 @@
+import { CancelCircleIcon } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
-import { Loading01Icon, CancelCircleIcon } from '@hugeicons/core-free-icons';
+import { Icon } from '@iconify/react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useServerHealth } from '@/lib/hooks/useServer';
@@ -33,7 +34,7 @@ export function ServerStatus() {
 
         {isLoading ? (
           <div className="flex items-center gap-2">
-            <HugeiconsIcon icon={Loading01Icon} size={16} className="h-4 w-4 animate-spin" />
+            <Icon icon="svg-spinners:ring-resize" className="h-4 w-4 animate-spin" />
             <span className="text-sm">Checking connection...</span>
           </div>
         ) : error ? (

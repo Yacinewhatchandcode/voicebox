@@ -76,7 +76,7 @@ Download a voice model, clone any voice from a few seconds of audio, and compose
 
 ## Download
 
-Voicebox is available now for macOS and Windows.
+### Desktop App
 
 | Platform              | Download                                                                                                                    |
 | --------------------- | --------------------------------------------------------------------------------------------------------------------------- |
@@ -85,7 +85,23 @@ Voicebox is available now for macOS and Windows.
 | Windows (MSI)         | [voicebox_0.1.0_x64_en-US.msi](https://github.com/jamiepine/voicebox/releases/download/v0.1.0/voicebox_0.1.0_x64_en-US.msi) |
 | Windows (Setup)       | [voicebox_0.1.0_x64-setup.exe](https://github.com/jamiepine/voicebox/releases/download/v0.1.0/voicebox_0.1.0_x64-setup.exe) |
 
-> **Linux builds coming soon** — Currently blocked by GitHub runner disk space limitations.
+> **Linux desktop builds coming soon** — Currently blocked by GitHub runner disk space limitations.
+
+### Docker (Server Deployment)
+
+Run Voicebox with the web UI in Docker:
+
+```bash
+# CPU-only (supports amd64 and arm64)
+docker run -p 8000:8000 -v voicebox-data:/app/data \
+  ghcr.io/jamiepine/voicebox:latest
+
+# NVIDIA GPU
+docker run --gpus all -p 8000:8000 -v voicebox-data:/app/data \
+  ghcr.io/jamiepine/voicebox:latest-cuda
+```
+
+See [Docker Deployment Guide](docs/plans/DOCKER_DEPLOYMENT.md) for full documentation.
 
 ---
 

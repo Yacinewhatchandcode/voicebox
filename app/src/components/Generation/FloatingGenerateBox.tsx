@@ -1,7 +1,8 @@
+import { SparklesIcon, TextSquareIcon } from '@hugeicons/core-free-icons';
+import { HugeiconsIcon } from '@hugeicons/react';
+import { Icon } from '@iconify/react';
 import { useMatchRoute } from '@tanstack/react-router';
 import { AnimatePresence, motion } from 'framer-motion';
-import { HugeiconsIcon } from '@hugeicons/react';
-import { Loading01Icon, TextSquareIcon, SparklesIcon } from '@hugeicons/core-free-icons';
 import { useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
@@ -302,7 +303,7 @@ export function FloatingGenerateBox({
                   size="icon"
                 >
                   {isPending ? (
-                    <HugeiconsIcon icon={Loading01Icon} size={16} className="h-4 w-4 animate-spin" />
+                    <Icon icon="svg-spinners:ring-resize" className="h-4 w-4 animate-spin" />
                   ) : (
                     <HugeiconsIcon icon={SparklesIcon} size={16} className="h-4 w-4" />
                   )}

@@ -1,6 +1,7 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { Delete01Icon, Download01Icon } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
-import { Download01Icon, Loading01Icon, Delete01Icon } from '@hugeicons/core-free-icons';
+import { Icon } from '@iconify/react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useCallback, useState } from 'react';
 import {
   AlertDialog,
@@ -154,7 +155,10 @@ export function ModelManagement() {
       <CardContent className="space-y-4">
         {isLoading ? (
           <div className="flex items-center justify-center py-8">
-            <HugeiconsIcon icon={Loading01Icon} size={24} className="h-6 w-6 animate-spin text-muted-foreground" />
+            <Icon
+              icon="svg-spinners:ring-resize"
+              className="h-6 w-6 animate-spin text-muted-foreground"
+            />
           </div>
         ) : modelStatus ? (
           <div className="space-y-4">
@@ -246,7 +250,7 @@ export function ModelManagement() {
             >
               {deleteMutation.isPending ? (
                 <>
-                  <HugeiconsIcon icon={Loading01Icon} size={16} className="h-4 w-4 mr-2 animate-spin" />
+                  <Icon icon="svg-spinners:ring-resize" className="h-4 w-4 mr-2 animate-spin" />
                   Deleting...
                 </>
               ) : (
@@ -320,7 +324,7 @@ function ModelItem({ model, onDownload, onDelete, isDownloading, formatSize }: M
           </div>
         ) : showDownloading ? (
           <Button size="sm" variant="outline" disabled>
-            <HugeiconsIcon icon={Loading01Icon} size={16} className="h-4 w-4 mr-2 animate-spin" />
+            <Icon icon="svg-spinners:ring-resize" className="h-4 w-4 mr-2 animate-spin" />
             Downloading...
           </Button>
         ) : (

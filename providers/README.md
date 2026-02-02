@@ -43,24 +43,27 @@ Voicebox uses a **pluggable provider architecture** that separates the main appl
 
 ## Platform Behavior
 
-| Platform | App Size | TTS Backend | Provider Download |
-|----------|----------|-------------|-------------------|
-| macOS (Apple Silicon) | ~300MB | MLX bundled | Not needed |
-| macOS (Intel) | ~300MB | PyTorch bundled | Not needed |
-| Windows | ~150MB | None bundled | Required |
-| Linux | ~150MB | None bundled | Required |
+| Platform              | App Size | TTS Backend     | Provider Download |
+| --------------------- | -------- | --------------- | ----------------- |
+| macOS (Apple Silicon) | ~300MB   | MLX bundled     | Not needed        |
+| macOS (Intel)         | ~300MB   | PyTorch bundled | Not needed        |
+| Windows               | ~150MB   | None bundled    | Required          |
+| Linux                 | ~150MB   | None bundled    | Required          |
 
 ### macOS (Apple Silicon)
+
 - MLX backend is **bundled** in the app
 - Works immediately after install
 - Uses Metal for GPU acceleration
 
 ### macOS (Intel)
+
 - PyTorch backend is **bundled** in the app
 - Works immediately after install
 - Uses CPU inference
 
 ### Windows / Linux
+
 - **No TTS bundled** - keeps app small (~150MB)
 - On first use, prompts to download a provider
 - Provider options:
@@ -108,7 +111,7 @@ On macOS, the `BundledProvider` directly calls the bundled `backends/` code:
 class BundledProvider:
     def __init__(self):
         self._backend = get_tts_backend()  # MLX or PyTorch
-    
+
     async def generate(self, text, voice_prompt, ...):
         return await self._backend.generate(text, voice_prompt, ...)
 ```
@@ -122,7 +125,7 @@ On Windows/Linux, the `LocalProvider` communicates with a standalone provider vi
 class LocalProvider:
     def __init__(self, base_url: str):
         self.base_url = base_url  # e.g., "http://127.0.0.1:8765"
-    
+
     async def generate(self, text, voice_prompt, ...):
         response = await self.client.post(
             f"{self.base_url}/tts/generate",
@@ -149,68 +152,82 @@ async def generate(text: str, voice_prompt: dict, ...):
 All providers (local or remote) must implement these HTTP endpoints:
 
 ### POST /tts/generate
+
 Generate speech from text.
 
 **Request:**
+
 ```json
 {
-    "text": "Hello world!",
-    "voice_prompt": { /* voice embedding */ },
-    "language": "en",
-    "seed": 12345,
-    "model_size": "1.7B"
+	"text": "Hello world!",
+	"voice_prompt": {
+		/* voice embedding */
+	},
+	"language": "en",
+	"seed": 12345,
+	"model_size": "1.7B"
 }
 ```
 
 **Response:**
+
 ```json
 {
-    "audio": "base64-encoded-wav",
-    "sample_rate": 24000,
-    "duration": 2.5
+	"audio": "base64-encoded-wav",
+	"sample_rate": 24000,
+	"duration": 2.5
 }
 ```
 
 ### POST /tts/create_voice_prompt
+
 Create voice embedding from reference audio.
 
 **Request:** `multipart/form-data`
+
 - `audio`: Audio file
 - `reference_text`: Transcript
 
 **Response:**
+
 ```json
 {
-    "voice_prompt": { /* voice embedding */ },
-    "was_cached": false
+	"voice_prompt": {
+		/* voice embedding */
+	},
+	"was_cached": false
 }
 ```
 
 ### GET /tts/health
+
 Health check.
 
 **Response:**
+
 ```json
 {
-    "status": "healthy",
-    "provider": "pytorch-cuda",
-    "version": "1.0.0",
-    "model": "1.7B",
-    "device": "cuda:0"
+	"status": "healthy",
+	"provider": "pytorch-cuda",
+	"version": "1.0.0",
+	"model": "1.7B",
+	"device": "cuda:0"
 }
 ```
 
 ### GET /tts/status
+
 Model status.
 
 **Response:**
+
 ```json
 {
-    "model_loaded": true,
-    "model_size": "1.7B",
-    "available_sizes": ["0.6B", "1.7B"],
-    "gpu_available": true,
-    "vram_used_mb": 1234
+	"model_loaded": true,
+	"model_size": "1.7B",
+	"available_sizes": ["0.6B", "1.7B"],
+	"gpu_available": true,
+	"vram_used_mb": 1234
 }
 ```
 
@@ -245,10 +262,12 @@ Model status.
 ## Building Providers
 
 ### Prerequisites
+
 - Python 3.12
 - PyInstaller
 
 ### Build PyTorch CPU Provider
+
 ```bash
 cd providers/pytorch-cpu
 pip install -r requirements.txt
@@ -257,6 +276,7 @@ python build.py
 ```
 
 ### Build PyTorch CUDA Provider
+
 ```bash
 cd providers/pytorch-cuda
 pip install torch --index-url https://download.pytorch.org/whl/cu121
@@ -273,6 +293,7 @@ Providers have **independent versions** from the app:
 - **Provider version:** `v1.0.0` (rare updates)
 
 Providers only need updates when:
+
 - TTS model changes (new Qwen3-TTS version)
 - API spec changes
 - Bug fixes in inference code

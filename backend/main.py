@@ -59,10 +59,8 @@ app.add_middleware(
 # ROOT & HEALTH ENDPOINTS
 # ============================================
 
-@app.get("/")
-async def root():
-    """Root endpoint."""
-    return {"message": "voicebox API", "version": __version__}
+# Root endpoint removed - web UI served at / instead
+# API info available at /health
 
 
 @app.post("/shutdown")
@@ -1847,6 +1845,16 @@ async def get_active_tasks():
         downloads=active_downloads,
         generations=active_generations,
     )
+
+
+# ============================================
+# WEB UI STATIC FILES
+# ============================================
+
+# Serve web UI at root if dist directory exists
+_web_dist_path = Path(__file__).parent.parent / "web" / "dist"
+if _web_dist_path.exists():
+    app.mount("/", StaticFiles(directory=str(_web_dist_path), html=True), name="web")
 
 
 # ============================================

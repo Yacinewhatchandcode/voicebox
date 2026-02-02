@@ -1,5 +1,6 @@
+import { CancelCircleIcon, CheckmarkCircle02Icon } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
-import { CheckmarkCircle02Icon, Loading01Icon, CancelCircleIcon } from '@hugeicons/core-free-icons';
+import { Icon } from '@iconify/react';
 import { useCallback, useEffect, useRef } from 'react';
 import { Progress } from '@/components/ui/progress';
 import { useToast } from '@/components/ui/use-toast';
@@ -60,7 +61,7 @@ export function useModelDownloadToast({
       title: displayName,
       description: (
         <div className="flex items-center gap-2">
-          <HugeiconsIcon icon={Loading01Icon} size={16} className="h-4 w-4 animate-spin" />
+          <Icon icon="svg-spinners:ring-resize" className="h-4 w-4 animate-spin" />
           <span>Connecting to download...</span>
         </div>
       ),
@@ -97,19 +98,35 @@ export function useModelDownloadToast({
 
           switch (progress.status) {
             case 'complete':
-              statusIcon = <HugeiconsIcon icon={CheckmarkCircle02Icon} size={16} className="h-4 w-4 text-green-500" />;
+              statusIcon = (
+                <HugeiconsIcon
+                  icon={CheckmarkCircle02Icon}
+                  size={16}
+                  className="h-4 w-4 text-green-500"
+                />
+              );
               statusText = 'Download complete';
               break;
             case 'error':
-              statusIcon = <HugeiconsIcon icon={CancelCircleIcon} size={16} className="h-4 w-4 text-destructive" />;
+              statusIcon = (
+                <HugeiconsIcon
+                  icon={CancelCircleIcon}
+                  size={16}
+                  className="h-4 w-4 text-destructive"
+                />
+              );
               statusText = `Error: ${progress.error || 'Unknown error'}`;
               break;
             case 'downloading':
-              statusIcon = <HugeiconsIcon icon={Loading01Icon} size={16} className="h-4 w-4 animate-spin" />;
+              statusIcon = (
+                <Icon icon="svg-spinners:ring-resize" className="h-4 w-4 animate-spin" />
+              );
               statusText = progress.filename || 'Downloading...';
               break;
             case 'extracting':
-              statusIcon = <HugeiconsIcon icon={Loading01Icon} size={16} className="h-4 w-4 animate-spin" />;
+              statusIcon = (
+                <Icon icon="svg-spinners:ring-resize" className="h-4 w-4 animate-spin" />
+              );
               statusText = 'Extracting...';
               break;
           }
@@ -155,7 +172,11 @@ export function useModelDownloadToast({
               toastUpdateRef.current({
                 title: (
                   <div className="flex items-center gap-2">
-                    <HugeiconsIcon icon={CheckmarkCircle02Icon} size={16} className="h-4 w-4 text-green-500" />
+                    <HugeiconsIcon
+                      icon={CheckmarkCircle02Icon}
+                      size={16}
+                      className="h-4 w-4 text-green-500"
+                    />
                     <span>{displayName}</span>
                   </div>
                 ),

@@ -1,5 +1,6 @@
+import { CancelCircleIcon } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
-import { Loading01Icon, CancelCircleIcon } from '@hugeicons/core-free-icons';
+import { Icon } from '@iconify/react';
 import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
@@ -13,7 +14,11 @@ interface ModelProgressProps {
   isDownloading?: boolean;
 }
 
-export function ModelProgress({ modelName, displayName, isDownloading = false }: ModelProgressProps) {
+export function ModelProgress({
+  modelName,
+  displayName,
+  isDownloading = false,
+}: ModelProgressProps) {
   const [progress, setProgress] = useState<ModelProgressType | null>(null);
   const serverUrl = useServerStore((state) => state.serverUrl);
 
@@ -75,10 +80,12 @@ export function ModelProgress({ modelName, displayName, isDownloading = false }:
   const getStatusIcon = () => {
     switch (progress.status) {
       case 'error':
-        return <HugeiconsIcon icon={CancelCircleIcon} size={16} className="h-4 w-4 text-destructive" />;
+        return (
+          <HugeiconsIcon icon={CancelCircleIcon} size={16} className="h-4 w-4 text-destructive" />
+        );
       case 'downloading':
       case 'extracting':
-        return <HugeiconsIcon icon={Loading01Icon} size={16} className="h-4 w-4 animate-spin" />;
+        return <Icon icon="svg-spinners:ring-resize" className="h-4 w-4 animate-spin" />;
       default:
         return null;
     }

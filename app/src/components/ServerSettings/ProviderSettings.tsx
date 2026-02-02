@@ -1,5 +1,6 @@
-import { Delete01Icon, Download01Icon, Loading01Icon } from '@hugeicons/core-free-icons';
+import { Delete01Icon, Download01Icon } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
+import { Icon } from '@iconify/react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useCallback, useState } from 'react';
 import {
@@ -162,7 +163,7 @@ export function ProviderSettings() {
         </CardHeader>
         <CardContent>
           <div className="flex items-center justify-center py-8">
-            <HugeiconsIcon icon={Loading01Icon} size={24} className="h-6 w-6 animate-spin" />
+            <Icon icon="svg-spinners:ring-resize" className="h-6 w-6 animate-spin" />
           </div>
         </CardContent>
       </Card>
@@ -210,11 +211,7 @@ export function ProviderSettings() {
                     disabled={downloadingProvider === 'pytorch-cuda'}
                   >
                     {downloadingProvider === 'pytorch-cuda' ? (
-                      <HugeiconsIcon
-                        icon={Loading01Icon}
-                        size={16}
-                        className="h-4 w-4 animate-spin"
-                      />
+                      <Icon icon="svg-spinners:ring-resize" className="h-4 w-4 animate-spin" />
                     ) : (
                       <>
                         <HugeiconsIcon icon={Download01Icon} size={16} className="h-4 w-4 mr-1" />
@@ -257,11 +254,7 @@ export function ProviderSettings() {
                     disabled={downloadingProvider === 'pytorch-cpu'}
                   >
                     {downloadingProvider === 'pytorch-cpu' ? (
-                      <HugeiconsIcon
-                        icon={Loading01Icon}
-                        size={16}
-                        className="h-4 w-4 animate-spin"
-                      />
+                      <Icon icon="svg-spinners:ring-resize" className="h-4 w-4 animate-spin" />
                     ) : (
                       <>
                         <HugeiconsIcon icon={Download01Icon} size={16} className="h-4 w-4 mr-1" />

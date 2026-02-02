@@ -1,6 +1,6 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { HugeiconsIcon } from '@hugeicons/react';
-import { Edit01Icon, MoreHorizontalIcon, Add01Icon, Delete01Icon, Mic01Icon } from '@hugeicons/core-free-icons';
+import { Edit01Icon, MoreHorizontalIcon, Add01Icon, Delete01Icon } from '@hugeicons/core-free-icons';
 import { useMemo, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import {
@@ -19,6 +19,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { ProfileForm } from '@/components/VoiceProfiles/ProfileForm';
+import { ProfileAvatar } from '@/components/VoiceProfiles/ProfileAvatar';
 import { apiClient } from '@/lib/api/client';
 import type { VoiceProfileResponse } from '@/lib/api/types';
 import { BOTTOM_SAFE_AREA_PADDING } from '@/lib/constants/ui';
@@ -185,9 +186,12 @@ function VoiceRow({
     <TableRow className="cursor-pointer" onClick={onEdit}>
       <TableCell>
         <div className="flex items-center gap-2">
-          <div className="h-8 w-8 rounded-lg bg-muted flex items-center justify-center shrink-0">
-            <HugeiconsIcon icon={Mic01Icon} size={16} className="h-4 w-4 text-muted-foreground" />
-          </div>
+          <ProfileAvatar
+            profileId={profile.id}
+            avatarPath={profile.avatar_path}
+            size="md"
+            alt={`${profile.name} avatar`}
+          />
           <div>
             <div className="font-medium">{profile.name}</div>
             {profile.description && (
