@@ -13,7 +13,6 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
@@ -205,11 +204,7 @@ export function ProviderSettings() {
               className={`flex items-center justify-between py-2 ${isMacOS() ? 'opacity-50' : ''}`}
             >
               <div className="flex items-center space-x-3 flex-1">
-                <RadioGroupItem
-                  value="pytorch-cuda"
-                  id="cuda"
-                  disabled={isMacOS() || isStarting}
-                />
+                <RadioGroupItem value="pytorch-cuda" id="cuda" disabled={isMacOS() || isStarting} />
                 <Label
                   htmlFor="cuda"
                   className={`flex-1 ${isMacOS() || isStarting ? 'cursor-not-allowed' : 'cursor-pointer'}`}
@@ -265,7 +260,10 @@ export function ProviderSettings() {
             <div className="flex items-center justify-between py-2">
               <div className="flex items-center space-x-3 flex-1">
                 <RadioGroupItem value="pytorch-cpu" id="cpu" disabled={isStarting} />
-                <Label htmlFor="cpu" className={`flex-1 ${isStarting ? 'cursor-not-allowed' : 'cursor-pointer'}`}>
+                <Label
+                  htmlFor="cpu"
+                  className={`flex-1 ${isStarting ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+                >
                   <div className="font-medium">PyTorch CPU</div>
                   <div className="text-sm text-muted-foreground">
                     Works on any system, slower inference
@@ -317,7 +315,10 @@ export function ProviderSettings() {
             {isMacOS() && (
               <div className="flex items-center space-x-3 py-2">
                 <RadioGroupItem value="apple-mlx" id="mlx" disabled={isStarting} />
-                <Label htmlFor="mlx" className={`flex-1 ${isStarting ? 'cursor-not-allowed' : 'cursor-pointer'}`}>
+                <Label
+                  htmlFor="mlx"
+                  className={`flex-1 ${isStarting ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+                >
                   <div className="font-medium">MLX (Apple Silicon)</div>
                   <div className="text-sm text-muted-foreground">
                     Bundled with the app - optimized for M-series chips
