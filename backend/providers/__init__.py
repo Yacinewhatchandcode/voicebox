@@ -220,16 +220,11 @@ class ProviderManager:
             installed.append("pytorch-cpu")
         # Linux: no bundled provider - users must download
         
-        # Check for downloaded providers (Phase 2)
-        providers_dir = _get_providers_dir()
-        if providers_dir.exists():
-            for provider_file in providers_dir.glob("tts-provider-*"):
-                if provider_file.is_file() and provider_file.stat().st_size > 0:
-                    name = provider_file.name
-                    if "pytorch-cpu" in name:
-                        installed.append("pytorch-cpu")
-                    elif "pytorch-cuda" in name:
-                        installed.append("pytorch-cuda")
+        # Check for downloaded providers by checking if binary path exists
+        for provider_type in ["pytorch-cpu", "pytorch-cuda"]:
+            binary_path = get_provider_binary_path(provider_type)
+            if binary_path and binary_path.exists() and provider_type not in installed:
+                installed.append(provider_type)
         
         return installed
     

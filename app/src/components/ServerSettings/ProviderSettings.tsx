@@ -22,6 +22,12 @@ import { apiClient } from '@/lib/api/client';
 import { useModelDownloadToast } from '@/lib/hooks/useModelDownloadToast';
 
 const isMacOS = () => navigator.platform.toLowerCase().includes('mac');
+const isWindows = () => navigator.platform.toLowerCase().includes('win');
+const getPlatformName = () => {
+  if (isMacOS()) return 'macOS';
+  if (isWindows()) return 'Windows';
+  return 'Linux';
+};
 
 type ProviderType =
   | 'auto'
@@ -200,14 +206,12 @@ export function ProviderSettings() {
             disabled={isStarting}
           >
             {/* PyTorch CUDA */}
-            <div
-              className={`flex items-center justify-between py-2 ${isMacOS() ? 'opacity-50' : ''}`}
-            >
-              <div className="flex items-center space-x-3 flex-1">
-                <RadioGroupItem value="pytorch-cuda" id="cuda" disabled={isMacOS() || isStarting} />
+            <div className="flex items-center justify-between py-2">
+              <div className={`flex items-center space-x-3 flex-1 ${isMacOS() || !installedProviders.includes('pytorch-cuda') ? 'opacity-50' : ''}`}>
+                <RadioGroupItem value="pytorch-cuda" id="cuda" disabled={isMacOS() || isStarting || !installedProviders.includes('pytorch-cuda')} />
                 <Label
                   htmlFor="cuda"
-                  className={`flex-1 ${isMacOS() || isStarting ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+                  className={`flex-1 ${isMacOS() || isStarting || !installedProviders.includes('pytorch-cuda') ? 'cursor-not-allowed' : 'cursor-pointer'}`}
                 >
                   <div className="font-medium">PyTorch CUDA</div>
                   <div className="text-sm text-muted-foreground">
@@ -216,41 +220,45 @@ export function ProviderSettings() {
                 </Label>
               </div>
               <div className="flex items-center gap-2">
-                {!installedProviders.includes('pytorch-cuda') && (
-                  <Button
-                    onClick={() => handleDownload('pytorch-cuda')}
-                    size="sm"
-                    disabled={downloadingProvider === 'pytorch-cuda' || isStarting}
-                  >
-                    {downloadingProvider === 'pytorch-cuda' ? (
-                      <Icon icon="svg-spinners:ring-resize" className="h-4 w-4 animate-spin" />
-                    ) : (
-                      <>
-                        <HugeiconsIcon icon={Download01Icon} size={16} className="h-4 w-4 mr-1" />
-                        Download (2.4GB)
-                      </>
-                    )}
-                  </Button>
+                {isMacOS() && (
+                  <>
+                    <span className="text-xs text-muted-foreground">2.4GB</span>
+                    <Button size="sm" variant="secondary" disabled>
+                      Not Available on macOS
+                    </Button>
+                  </>
                 )}
-                {installedProviders.includes('pytorch-cuda') &&
-                  selectedProvider !== 'pytorch-cuda' && (
+                {!isMacOS() && !installedProviders.includes('pytorch-cuda') && (
+                  <>
+                    <span className="text-xs text-muted-foreground">2.4GB</span>
                     <Button
-                      onClick={() => handleStart('pytorch-cuda')}
+                      onClick={() => handleDownload('pytorch-cuda')}
                       size="sm"
                       variant="outline"
-                      disabled={isStarting}
+                      disabled={downloadingProvider === 'pytorch-cuda' || isStarting}
+                      className="shrink-0"
                     >
-                      Start
+                      {downloadingProvider === 'pytorch-cuda' ? (
+                        <Icon icon="svg-spinners:ring-resize" className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <>
+                          <HugeiconsIcon icon={Download01Icon} size={16} className="h-4 w-4 mr-2" />
+                          Download
+                        </>
+                      )}
                     </Button>
-                  )}
+                  </>
+                )}
                 {installedProviders.includes('pytorch-cuda') && (
                   <Button
                     onClick={() => handleDelete('pytorch-cuda')}
                     size="sm"
-                    variant="ghost"
+                    variant="outline"
                     disabled={isStarting}
+                    className="shrink-0"
                   >
-                    <HugeiconsIcon icon={Delete01Icon} size={16} className="h-4 w-4" />
+                    <HugeiconsIcon icon={Delete01Icon} size={16} className="h-4 w-4 mr-2" />
+                    Uninstall
                   </Button>
                 )}
               </div>
@@ -258,11 +266,11 @@ export function ProviderSettings() {
 
             {/* PyTorch CPU */}
             <div className="flex items-center justify-between py-2">
-              <div className="flex items-center space-x-3 flex-1">
-                <RadioGroupItem value="pytorch-cpu" id="cpu" disabled={isStarting} />
+              <div className={`flex items-center space-x-3 flex-1 ${!installedProviders.includes('pytorch-cpu') ? 'opacity-50' : ''}`}>
+                <RadioGroupItem value="pytorch-cpu" id="cpu" disabled={isStarting || !installedProviders.includes('pytorch-cpu')} />
                 <Label
                   htmlFor="cpu"
-                  className={`flex-1 ${isStarting ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+                  className={`flex-1 ${isStarting || !installedProviders.includes('pytorch-cpu') ? 'cursor-not-allowed' : 'cursor-pointer'}`}
                 >
                   <div className="font-medium">PyTorch CPU</div>
                   <div className="text-sm text-muted-foreground">
@@ -272,64 +280,67 @@ export function ProviderSettings() {
               </div>
               <div className="flex items-center gap-2">
                 {!installedProviders.includes('pytorch-cpu') && (
-                  <Button
-                    onClick={() => handleDownload('pytorch-cpu')}
-                    size="sm"
-                    disabled={downloadingProvider === 'pytorch-cpu' || isStarting}
-                  >
-                    {downloadingProvider === 'pytorch-cpu' ? (
-                      <Icon icon="svg-spinners:ring-resize" className="h-4 w-4 animate-spin" />
-                    ) : (
-                      <>
-                        <HugeiconsIcon icon={Download01Icon} size={16} className="h-4 w-4 mr-1" />
-                        Download (300MB)
-                      </>
-                    )}
-                  </Button>
-                )}
-                {installedProviders.includes('pytorch-cpu') &&
-                  selectedProvider !== 'pytorch-cpu' && (
+                  <>
+                    <span className="text-xs text-muted-foreground">242MB</span>
                     <Button
-                      onClick={() => handleStart('pytorch-cpu')}
+                      onClick={() => handleDownload('pytorch-cpu')}
                       size="sm"
                       variant="outline"
-                      disabled={isStarting}
+                      disabled={downloadingProvider === 'pytorch-cpu' || isStarting}
+                      className="shrink-0"
                     >
-                      Start
+                      {downloadingProvider === 'pytorch-cpu' ? (
+                        <Icon icon="svg-spinners:ring-resize" className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <>
+                          <HugeiconsIcon icon={Download01Icon} size={16} className="h-4 w-4 mr-2" />
+                          Download
+                        </>
+                      )}
                     </Button>
-                  )}
+                  </>
+                )}
                 {installedProviders.includes('pytorch-cpu') && (
                   <Button
                     onClick={() => handleDelete('pytorch-cpu')}
                     size="sm"
-                    variant="ghost"
+                    variant="outline"
                     disabled={isStarting}
+                    className="shrink-0"
                   >
-                    <HugeiconsIcon icon={Delete01Icon} size={16} className="h-4 w-4" />
+                    <HugeiconsIcon icon={Delete01Icon} size={16} className="h-4 w-4 mr-2" />
+                    Uninstall
                   </Button>
                 )}
               </div>
             </div>
 
             {/* MLX bundled (macOS Apple Silicon only) */}
-            <div className="flex items-center space-x-3 py-2">
-              <RadioGroupItem value="apple-mlx" id="mlx" disabled={isStarting || !isMacOS()} />
-              <Label
-                htmlFor="mlx"
-                className={`flex-1 ${isStarting ? 'cursor-not-allowed' : 'cursor-pointer'}`}
-              >
-                <div className="font-medium">Apple MLX</div>
-                <div className="text-sm text-muted-foreground">
-                  {isMacOS()
-                    ? 'Bundled with this version, optimized for Apple Silicon'
-                    : 'Only available on Apple Silicon'}
-                </div>
-              </Label>
+            <div className="flex items-center justify-between py-2">
+              <div className={`flex items-center space-x-3 flex-1 ${!isMacOS() ? 'opacity-50' : ''}`}>
+                <RadioGroupItem value="apple-mlx" id="mlx" disabled={isStarting || !isMacOS()} />
+                <Label
+                  htmlFor="mlx"
+                  className={`flex-1 ${isStarting || !isMacOS() ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+                >
+                  <div className="font-medium">Apple MLX</div>
+                  <div className="text-sm text-muted-foreground">
+                    {isMacOS()
+                      ? 'Bundled with this version, optimized for Apple Silicon'
+                      : 'Only available on Apple Silicon'}
+                  </div>
+                </Label>
+              </div>
+              {!isMacOS() && (
+                <Button size="sm" variant="secondary" disabled>
+                  Not Available on {getPlatformName()}
+                </Button>
+              )}
             </div>
 
             {/* Remote */}
-            <div className="space-y-2 py-2 opacity-50">
-              <div className="flex items-center space-x-3">
+            <div className="flex items-center justify-between py-2">
+              <div className="flex items-center space-x-3 flex-1 opacity-50">
                 <RadioGroupItem value="remote" id="remote" disabled />
                 <Label htmlFor="remote" className="flex-1 cursor-not-allowed">
                   <div className="font-medium">Remote Server</div>
@@ -338,17 +349,23 @@ export function ProviderSettings() {
                   </div>
                 </Label>
               </div>
+              <Button size="sm" variant="secondary" disabled>
+                Coming Soon
+              </Button>
             </div>
 
             {/* OpenAI */}
-            <div className="space-y-2 py-2 opacity-50">
-              <div className="flex items-center space-x-3">
+            <div className="flex items-center justify-between py-2">
+              <div className="flex items-center space-x-3 flex-1 opacity-50">
                 <RadioGroupItem value="openai" id="openai" disabled />
                 <Label htmlFor="openai" className="flex-1 cursor-not-allowed">
                   <div className="font-medium">OpenAI API</div>
                   <div className="text-sm text-muted-foreground">Use OpenAI's TTS API</div>
                 </Label>
               </div>
+              <Button size="sm" variant="secondary" disabled>
+                Coming Soon
+              </Button>
             </div>
           </RadioGroup>
           <p className="text-xs text-muted-foreground mt-5">
